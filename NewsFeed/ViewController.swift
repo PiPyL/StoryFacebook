@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     private let colors: [UIColor] = [.black, .blue, .brown, .cyan, .orange, .red, .green, .yellow, .systemPink]
     
     private let height: CGFloat = 100
-    private let width: CGFloat = 65
+    private let width: CGFloat = 45
     private let leadingMin: CGFloat = 10
     
     override func viewDidLoad() {
@@ -43,6 +43,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         case UICollectionView.elementKindSectionHeader:
             if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "MyCardCollectionView", for: indexPath) as? MyCardCollectionView {
                 headerView.cardView.backgroundColor = .green
+                headerView.viewWidth.constant = width
                 return headerView
             }
             return UICollectionReusableView()
@@ -66,7 +67,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let x = collectionView.contentOffset.x - 10
+        let x = collectionView.contentOffset.x
         guard let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? MyCardCollectionView else { return }
         
         let newHeight = height - x < width ? width : height - x
@@ -74,7 +75,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         headerView.cardView.roundCorners([.topRight, .bottomRight], radius: width - newHeight / 2)
         
         let leadingSpacing = (10 - x * 0.2) > 10 ? 10 : (10 - x * 0.2)
-        print(leadingSpacing)
+        print(newHeight)
         headerView.viewLeading.constant = leadingSpacing > 0 ? leadingSpacing : 0
     }
 }
