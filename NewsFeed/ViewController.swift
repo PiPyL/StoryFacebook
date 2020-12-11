@@ -14,9 +14,10 @@ class ViewController: UIViewController {
     private let colors: [UIColor] = [.black, .blue, .brown, .cyan, .orange, .red, .green, .yellow, .systemPink]
     
     private let height: CGFloat = 100
-    private let width: CGFloat = 45
+    private let width: CGFloat = 60
+    private let widthPoint: CGFloat = 45
     private let leadingMin: CGFloat = 10
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -44,6 +45,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
             if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "MyCardCollectionView", for: indexPath) as? MyCardCollectionView {
                 headerView.cardView.backgroundColor = .green
                 headerView.viewWidth.constant = width
+//                headerView.cardView.layer.cornerRadius = 12
                 return headerView
             }
             return UICollectionReusableView()
@@ -70,19 +72,30 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         let x = collectionView.contentOffset.x
         guard let headerView = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(row: 0, section: 0)) as? MyCardCollectionView else { return }
         
-        let newHeight = height - x < width ? width : height - x
+        let newHeight = height - x < widthPoint ? widthPoint : height - x
         headerView.viewHeight.constant = newHeight
-        headerView.cardView.roundCorners([.topRight, .bottomRight], radius: width - newHeight / 2)
         
-        let leadingSpacing = (10 - x * 0.2) > 10 ? 10 : (10 - x * 0.2)
-        print(newHeight)
+        let newWidth = width - x < widthPoint ? widthPoint : width - x
+        headerView.viewWidth.constant = newWidth
+        
+        var cornerRadius = newWidth / 2 * x * 0.1
+        cornerRadius = cornerRadius > newWidth / 2 ? newWidth / 2 : cornerRadius
+        headerView.cardView.roundCorners([.topRight, .bottomRight], radius: cornerRadius)
+//        headerView.cardView.roundCorners([.topLeft, .bottomLeft], radius: cornerRadius)
+//        headerView.cardView.roundCorners([.topLeft, .bottomLeft], radius: newWidth / 2 - cornerRadius)
+
+        let leadingSpacing = (leadingMin - x * 0.2) > leadingMin ? leadingMin : (leadingMin - x * 0.2)
         headerView.viewLeading.constant = leadingSpacing > 0 ? leadingSpacing : 0
+        
+        print(newWidth / 2 - cornerRadius)
     }
 }
 
 class NewsFeedCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
+        self.layer.cornerRadius = 12
+        self.layer.masksToBounds = true
     }
 }
 
